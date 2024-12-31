@@ -2,6 +2,9 @@
 
 An application that uses your webcam to detect and alert you when you're pulling your hair, helping you be mindful of this behavior.
 
+<img width="794" alt="Screenshot 2024-12-31 at 12 50 13 AM" src="https://github.com/user-attachments/assets/4ec58b81-6b02-498f-a2d8-8e5b6636c61b" />
+
+
 ## Features
 
 - Real-time pose detection using TensorFlow.js
