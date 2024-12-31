@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hair Pulling Detection</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+      }
+      #videoContainer {
+        position: relative;
+        width: 640px;
+        height: 480px;
+        margin: 0 auto;
+      }
+      #webcam {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        transform: scaleX(-1);
+      }
+      #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #status {
+        margin-top: 20px;
+        padding: 10px;
+        text-align: center;
+        font-size: 16px;
+        color: #333;
+      }
+      .detection-active {
+        color: green !important;
+      }
+      .detection-warning {
+        color: red !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="videoContainer">
+      <video id="webcam" autoplay playsinline></video>
+    </div>
+    <div id="status">Initializing detection...</div>
+
+    <script>
+      // Set up error handling
+      window.addEventListener('error', function (event) {
+        console.error('Script error:', event.error);
+        document.getElementById('status').textContent =
+          'Error: ' + event.error.message;
+      });
+
+      // Set up environment
+      window.process = {
+        ...window.process,
+        env: {
+          ...window.process.env,
+          TFJS_NO_CORS: '1',
+          NODE_ENV: 'production',
+        },
+      };
+    </script>
+
+    <!-- Load dependencies in order -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.17.0/dist/tf-backend-webgl.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js"></script>
+
+    <!-- Initialize TensorFlow.js -->
+    <script>
+      tf.ready()
+        .then(() => {
+          console.log('TensorFlow.js initialized successfully');
+          // Load the application code
+          const script = document.createElement('script');
+          script.src = 'renderer.js';
+          script.onerror = (error) => {
+            console.error('Error loading renderer.js:', error);
+            document.getElementById('status').textContent =
+              'Error loading application code';
+          };
+          document.body.appendChild(script);
+        })
+        .catch((error) => {
+          console.error('Error initializing TensorFlow.js:', error);
+          document.getElementById('status').textContent =
+            'Error initializing TensorFlow.js';
+        });
+    </script>
+  </body>
+</html>
