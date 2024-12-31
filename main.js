@@ -31,7 +31,21 @@ function createWindow() {
       contextIsolation: false,
       webSecurity: true,
       additionalArguments: ['--no-sandbox'],
+      backgroundThrottling: false,
     },
+    backgroundColor: '#000000',
+  });
+
+  // Prevent window from being garbage collected when hidden
+  mainWindow.setBackgroundThrottling(false);
+
+  // Handle window close event
+  mainWindow.on('close', function (event) {
+    if (!app.isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
+      return false;
+    }
   });
 
   // Set Content Security Policy
@@ -181,14 +195,18 @@ app.whenReady().then(async () => {
   });
 });
 
+// Prevent app from quitting when all windows are closed on macOS
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
+// Handle activation when the dock icon is clicked
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
+  } else {
+    mainWindow.show();
   }
 });
